@@ -129,8 +129,9 @@ export class RecipesService {
     };
   }
 
+  // Metodo para obtener todas las recetas donde un usuario es author
   async getAllRecipesByIdUser(idUser: string): Promise<{ data: Recipe[] }> {
-    const recipes = await this.recipeRepository.find({
+    const recipesAuthored = await this.recipeRepository.find({
       where: {
         author: { id: idUser },
       },
@@ -138,10 +139,11 @@ export class RecipesService {
     });
 
     return {
-      data: recipes,
+      data: recipesAuthored,
     };
   }
 
+  // Metodo para obtener las recetas de un usuario con paginacion
   async getPaginatedRecipesByIdUser(
     idUser: string,
     page: number = 1,
@@ -151,6 +153,53 @@ export class RecipesService {
     const [data, total] = await this.recipeRepository.findAndCount({
       where: {
         author: { id: idUser },
+      },
+      ...recipeConsultOptions,
+      skip,
+      take: limit,
+      order: { created_at: 'DESC' },
+    });
+    return {
+      data,
+      meta: {
+        totalItems: total,
+        itemCount: data.length,
+        itemsPerPage: limit,
+        totalPages: Math.ceil(total / limit),
+        currentPage: page,
+      },
+    };
+  }
+
+  // Metodo para obtener todas las recetas donde un usuario es colaborador
+  async getAllCollaboratedRecipesByIdUser(
+    idUser: string,
+  ): Promise<{ data: Recipe[] }> {
+    // Buscamos las recetas donde el usuario es colaborador
+    const recipesCollaborated = await this.recipeRepository.find({
+      where: {
+        collaborators: {
+          user: { id: idUser },
+        },
+      },
+      ...recipeConsultOptions,
+    });
+    return {
+      data: recipesCollaborated,
+    };
+  }
+
+  async getPaginatedCollaboratedRecipesByIdUser(
+    idUser: string,
+    page: number = 1,
+    limit: number = 10,
+  ) {
+    const skip = (page - 1) * limit;
+    const [data, total] = await this.recipeRepository.findAndCount({
+      where: {
+        collaborators: {
+          user: { id: idUser },
+        },
       },
       ...recipeConsultOptions,
       skip,
@@ -233,7 +282,9 @@ export class RecipesService {
     // Si updatedData tiene ingredientes o pasos, tenemos que anexarle addBy
     if (updatedData.ingredients) {
       // Eliminamos los ingredientes anteriores para evitar duplicados
-      await this.recipeIngredientRepository.delete({ recipe: { id: recipe.id } });
+      await this.recipeIngredientRepository.delete({
+        recipe: { id: recipe.id },
+      });
       // Luego asignamos el addBy a cada ingrediente nuevo
       for (const ingredient of updatedData.ingredients) {
         Object.assign(ingredient, { addBy: { id: userId } as User });
