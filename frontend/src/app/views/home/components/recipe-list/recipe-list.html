@@ -1,0 +1,5 @@
+<main class="recipe-list">
+  @for (recipe of recipes; track $index) {
+    <app-recipe-card [recipe]="recipe" (viewDetails)="openRecipeDetails($event)"></app-recipe-card>
+  }
+</main>

@@ -1,0 +1,36 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav mode="side" opened class="sidenav">
+    <div class="logo-section">
+      <h2>Sama technical test</h2>
+    </div>
+
+    <mat-nav-list>
+      <a class="list-item" mat-list-item routerLink="dashboard" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>dashboard</mat-icon>
+        <span matListItemTitle>Dashboard</span>
+      </a>
+      <a class="list-item" mat-list-item routerLink="recipes" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>dataset</mat-icon>
+        <span matListItemTitle>Mis Recetas</span>
+      </a>
+      <a class="list-item" mat-list-item routerLink="new" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>add_circle</mat-icon>
+        <span matListItemTitle>Crear Receta</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="transparent" class="top-bar">
+      <span>Technical test Sama </span>
+      <span class="spacer"></span>
+      <button matIconButton class="logout-button" (click)="handleLogout()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

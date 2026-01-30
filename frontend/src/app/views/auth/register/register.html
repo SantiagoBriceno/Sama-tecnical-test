@@ -1,0 +1,45 @@
+<div class="register-container">
+  <mat-card class="register-card">
+    <mat-card-header>
+      <mat-card-title>Crear Cuenta</mat-card-title>
+    </mat-card-header>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Usuario</mat-label>
+        <input matInput formControlName="username">
+        @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
+        <mat-error>{{ getErrorMessage('username') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Contraseña</mat-label>
+        <input matInput type="password" formControlName="password">
+        @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+        <mat-error>{{ getErrorMessage('password') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Confirmar Contraseña</mat-label>
+        <input matInput type="password" formControlName="confirmPassword">
+        @if (registerForm.get('confirmPassword')?.touched &&
+        (registerForm.get('confirmPassword')?.hasError('required') || registerForm.hasError('passwordMismatch'))) {
+        <mat-error>{{ getErrorMessage('confirmPassword') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="actions">
+        <button mat-flat-button color="primary" type="submit">
+          Registrarse
+        </button>
+        <button mat-button type="button" (click)="goToLogin()">
+          ¿Ya tienes cuenta? Inicia sesión
+        </button>
+      </div>
+
+    </form>
+  </mat-card>
+</div>

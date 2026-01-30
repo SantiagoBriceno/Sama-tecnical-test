@@ -1,0 +1,126 @@
+// Include theming for Angular Material with `mat.theme()`.
+// This Sass mixin will define CSS variables that are used for styling Angular Material
+// components according to the Material 3 design spec.
+// Learn more about theming and how to use it for your application's
+// custom components at https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+  @include mat.theme((color: (primary: mat.$cyan-palette,
+        tertiary: mat.$orange-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    ));
+}
+
+body {
+  // Default the application to a light color theme. This can be changed to
+  // `dark` to enable the dark color theme, or to `light dark` to defer to the
+  // user's system settings.
+  color-scheme: light;
+
+  // Set a default background, font and text colors for the application using
+  // Angular Material's system-level CSS variables. Learn more about these
+  // variables at https://material.angular.dev/guide/system-variables
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  // Reset the user agent margin.
+  margin: 0;
+  height: 100%;
+}
+
+/* You can add global styles to this file, and also import other style files */
+.title {
+  font-size: 1.5rem;
+}
+
+ul {
+  padding-left: 20px;
+
+  margin-top: 20px;
+  line-height: 1.6;
+
+  li {
+    margin-bottom: 5px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+ol {
+  padding-left: 20px;
+  margin-top: 20px;
+  line-height: 1.6;
+
+  li {
+    margin-bottom: 10px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.snack-success {
+  @include mat.snack-bar-overrides((container-color: #2e7d32,
+      supporting-text-color: white,
+      button-color: white,
+    ));
+}
+
+.snack-error {
+  @include mat.snack-bar-overrides((container-color: #d32f2f,
+      supporting-text-color: white,
+      button-color: white,
+    ));
+}
+
+.snack-info {
+  @include mat.snack-bar-overrides((container-color: #1976d2,
+      supporting-text-color: white,
+      button-color: white,
+    ));
+}
+
+.form-title {
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  color: #333;
+
+  h3 {
+    margin: 0;
+  }
+
+  p {
+    margin: 5px 0 0 0;
+    font-size: 0.9rem;
+    color: #666;
+  }
+}
+
+.form-container {
+  padding: 20px;
+  border-radius: 20px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.recipe-card {
+  border-left: 5px solid #4caf50 !important; // Indica que es la versión "viva"
+  background-color: #f9f9f9 !important;
+  word-wrap: break-word !important;
+  //   /* Fuerza el salto de palabra */
+  overflow-wrap: break-word !important;
+}
+
+.form-section {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}

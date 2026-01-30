@@ -1,0 +1,151 @@
+<main class="edit-recipe-container">
+  <div class="form-container">
+
+    <form [formGroup]="recipeForm">
+      <div class="form-title">
+        <h3>Editor Colaborativo de recetas</h3>
+        <p>Edite la receta en tiempo real con otros colaboradores.</p>
+
+        <div class="collaborators-list">
+          <h4>Colaboradores activos:</h4>
+          <mat-chip-set>
+            @for (user of collaborators() || []; track user) {
+            <mat-chip>
+              <mat-icon matChipAvatar>account_circle</mat-icon>
+              {{ user }}
+            </mat-chip>
+            }
+          </mat-chip-set>
+        </div>
+      </div>
+
+
+      <div class="section-container form-section">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Título de la Receta</mat-label>
+          <input matInput formControlName="title" (focus)="onFieldFocus('title')" (blur)="onFieldBlur('title')">
+          @if (getEditorOf('title')) {
+          <mat-hint class="editor-hint">
+            <mat-icon inline>edit</mat-icon> {{ getEditorOf('title') }} está escribiendo...
+          </mat-hint>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput formControlName="description" (focus)="onFieldFocus('description')"
+            (blur)="onFieldBlur('description')"></textarea>
+          @if (getEditorOf('description')) {
+          <mat-hint class="editor-hint alert">
+            <mat-icon inline>person</mat-icon> {{ getEditorOf('description') }} está aquí
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+
+      <div formArrayName="ingredients" class="section-container form-section">
+        <h4>Ingredientes</h4>
+        @for (ingredient of ingredients.controls; track ingredient; let i = $index) {
+        <div class="row-edit-group" [formGroupName]="i">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="name" (focus)="onFieldFocus('ingredient-' + i)"
+              (blur)="onFieldBlur('ingredient-' + i)">
+            @if (getEditorOf('ingredient-' + i)) {
+            <mat-hint class="editor-hint">{{ getEditorOf('ingredient-' + i) }} editando...</mat-hint>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="quantity-field">
+            <mat-label>Cant.</mat-label>
+            <input matInput formControlName="quantity" (focus)="onFieldFocus('ingredient-' + i)"
+              (blur)="onFieldBlur('ingredient-' + i)">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="unit-field">
+            <mat-label>Unidad</mat-label>
+            <mat-select formControlName="unit" (focus)="onFieldFocus('ingredient-' + i)"
+              (blur)="onFieldBlur('ingredient-' + i)">
+              @for (u of units; track u) {
+              <mat-option [value]="u">{{ u }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          @if (ingredients.length > 1) {
+          <button mat-icon-button color="warn" (click)="removeIngredient($index)">
+            <mat-icon>delete</mat-icon>
+          </button>
+          }
+        </div>
+        }
+        <button mat-button color="primary" (click)="addIngredient()">
+          <mat-icon>add</mat-icon> Añadir Ingrediente
+        </button>
+      </div>
+
+      <div formArrayName="steps" class="section-container form-section">
+        <h4>Pasos de la receta</h4>
+        @for (step of steps.controls; track $index; let i = $index) {
+        <div class="row-edit-group" [formGroupName]="i">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Paso {{ $index + 1 }}</mat-label>
+            <textarea matInput formControlName="instruction" (focus)="onFieldFocus('step-' + $index)"
+              (blur)="onFieldBlur('step-' + $index)"></textarea>
+            @if (getEditorOf('step-' + $index)) {
+            <mat-hint class="editor-hint">{{ getEditorOf('step-' + $index) }} modificando este paso...</mat-hint>
+            }
+          </mat-form-field>
+          @if (steps.length > 1) {
+          <button mat-icon-button color="warn" (click)="removeStep($index)">
+            <mat-icon>delete</mat-icon>
+          </button>
+          }
+        </div>
+        }
+        <button mat-button color="primary" (click)="addStep()">
+          <mat-icon>add</mat-icon> Añadir Paso
+        </button>
+      </div>
+    </form>
+    <hr>
+    <div class="collaborators-list">
+      <h4>Colaboradores:</h4>
+      <mat-chip-set>
+        @for (user of selectedRecipe()?.collaborators || []; track user) {
+        <mat-chip>
+          <mat-icon matChipAvatar>account_circle</mat-icon>
+          {{ user.user.credentials.username}}
+        </mat-chip>
+        }
+      </mat-chip-set>
+    </div>
+  </div>
+
+  <div class="preview-section">
+    <h3>Vista Previa (Últimos cambios)</h3>
+    <mat-card class="recipe-card">
+      <mat-card-header>
+        <mat-card-title>{{ this.forEditRecipe()?.title }}</mat-card-title>
+        <mat-card-subtitle>Cambios guardados al instante</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ this.forEditRecipe()?.description }}</p>
+        <hr>
+        <p><strong>Ingredientes:</strong> {{ this.forEditRecipe()?.ingredients?.length }} añadidos</p>
+        <ul>
+          @for (ingredient of this.forEditRecipe()?.ingredients || []; track $index) {
+          <li>{{ ingredient.name }} {{ ingredient.quantity }} {{ ingredient.unit }}</li>
+          }
+        </ul>
+        <p><strong>Instrucciones:</strong> {{ this.forEditRecipe()?.steps?.length }} pasos
+        </p>
+        <ol>
+          @for (step of this.forEditRecipe()?.steps || []; track $index) {
+          <li>{{ step.instruction }}</li>
+          }
+        </ol>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</main>

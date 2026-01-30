@@ -1,0 +1,97 @@
+<main class="create-recipe-container">
+  <form [formGroup]="recipeForm" (ngSubmit)="onSubmit()" class="form-container">
+    <section class="form-title">
+      <h3>
+        Nueva Receta
+      </h3>
+      <p>Por favor, complete los detalles de su receta a continuación.</p>
+    </section>
+
+
+    <div class="form-section">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Título de la receta</mat-label>
+        <input matInput formControlName="title" placeholder="Ej: Lasaña de carne">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="description" rows="3"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="form-section">
+      <div class="section-header">
+        <h3>Ingredientes</h3>
+      </div>
+      <div formArrayName="ingredients">
+        @for (ing of ingredients.controls; track ing; let i = $index) {
+        <div [formGroupName]="i" class="ingredients-fields-container">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="name">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Cant.</mat-label>
+            <input matInput formControlName="quantity">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Unidad</mat-label>
+            <mat-select formControlName="unit">
+              @for (u of units; track u) {
+              <mat-option [value]="u">{{ u }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          @if (ingredients.length > 1) {
+          <button mat-icon-button color="warn" (click)="removeIngredient(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+          }
+        </div>
+        } @empty {
+        <p>No hay ingredientes agregados.</p>
+        }
+      </div>
+      <button type="button" mat-button color="primary" (click)="addIngredient()">
+        <mat-icon>add</mat-icon>
+        Añadir Ingrediente
+      </button>
+    </div>
+
+    <div class="form-section">
+      <div class="section-header">
+        <h3>Pasos de preparación</h3>
+
+      </div>
+      <div formArrayName="steps">
+        @for (step of steps.controls; track step; let j = $index) {
+        <div [formGroupName]="j" class="row-flex">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Instrucción</mat-label>
+            <textarea matInput formControlName="instruction"></textarea>
+          </mat-form-field>
+
+          @if (steps.length > 1) {
+          <button mat-icon-button color="warn" (click)="removeStep(j)">
+            <mat-icon>delete</mat-icon>
+          </button>
+          }
+        </div>
+        }
+      </div>
+      <button mat-button color="primary" (click)="addStep()">
+        <mat-icon>add</mat-icon>
+        Añadir
+      </button>
+    </div>
+
+    <button mat-raised-button color="accent" type="submit" [disabled]="recipeForm.invalid"
+      class="submit-btn full-width">
+      Guardar Receta
+    </button>
+  </form>
+  <app-recipe-preview [recipe]="recipeForm.value"></app-recipe-preview>
+</main>

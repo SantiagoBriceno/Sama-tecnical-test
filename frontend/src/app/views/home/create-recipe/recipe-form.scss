@@ -1,0 +1,45 @@
+.create-recipe-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+
+.full-width {
+  width: 100%;
+}
+
+.form-section {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .5rem;
+}
+
+.ingredients-fields-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.row-flex {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.step-number {
+  font-weight: bold;
+  font-size: 1.2rem;
+  min-width: 30px;
+}
+
+.submit-btn {
+  height: 50px;
+}

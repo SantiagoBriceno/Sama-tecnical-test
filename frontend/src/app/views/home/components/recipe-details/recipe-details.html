@@ -1,0 +1,25 @@
+<main>
+  <h2 mat-dialog-title>
+    Detalles de la receta
+  </h2>
+  <mat-dialog-content class="mat-typography">
+    <h3>{{recipe()?.title}}</h3>
+    <p>{{recipe()?.description}}</p>
+    <h3>Ingredientes</h3>
+    <ul class="ingredients-list">
+      @for (ingredient of recipe()?.ingredients; track $index) {
+      <li>{{ingredient.name}} {{ingredient.quantity}} {{ingredient.unit}}</li>
+      }
+    </ul>
+    <h3>Instrucciones</h3>
+    <ol class="instructions-list">
+      @for (step of recipe()?.steps; track $index) {
+      <li>{{step.instruction}}</li>
+      }
+    </ol>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="editRecipe()">Editar</button>
+    <button mat-button mat-dialog-close >Cerrar</button>
+  </mat-dialog-actions>
+</main>

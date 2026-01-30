@@ -1,0 +1,21 @@
+.card-avatar-img {
+  background-image: url('https://www.w3schools.com/howto/img_avatar.png');
+  background-size: cover;
+}
+
+mat-card-content p {
+  white-space: pre-wrap;
+  /* Esto respeta los saltos de línea del textarea */
+  word-break: break-word;
+}
+
+mat-card-title {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recipe-card {
+  position: sticky;
+  top: 20px;
+}
