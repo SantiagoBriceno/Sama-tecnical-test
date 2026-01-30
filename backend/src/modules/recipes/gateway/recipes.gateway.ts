@@ -49,6 +49,14 @@ export class RecipesGateway
   handleDisconnect(client: authenticatedClient) {
     console.log(`Client disconnected: ${client.id}`);
     // verificamos si el cliente estaba unido a alguna sala y lo removemos de ella
+    if (client.rooms) {
+      client.rooms.forEach((room) => {
+        if (room.startsWith('recipe-')) {
+          client.leave(room);
+          console.log(`Client ${client.id} left room ${room}`);
+        }
+      });
+    }
   }
 
   // Mensaje para indicar que un usuario está viendo una receta
@@ -159,9 +167,7 @@ export class RecipesGateway
         message: `El usuario ${user.username} ha editado la receta`,
       });
 
-    this.recipeService.updateRecipe(data.recipeId, data.data);
-    
-    console.log('mensaje enviado a la sala:', recipeRoom);
+    this.recipeService.updateRecipe(data.recipeId, data.data, user.sub);
     return {
       status: 'field-updated',
       room: recipeRoom,

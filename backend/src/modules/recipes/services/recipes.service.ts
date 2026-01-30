@@ -220,12 +220,41 @@ export class RecipesService {
     return { data: recipeUpdated };
   }
 
-  async updateRecipe(id: string, updatedData: Partial<CreateRecipeDto>) {
+  async updateRecipe(
+    id: string,
+    updatedData: Partial<CreateRecipeDto>,
+    userId: string,
+  ) {
     const recipe = await this.recipeRepository.findOne({ where: { id } });
     if (!recipe) {
       throw new Error('Receta no encontrada');
     }
-    Object.assign(recipe, updatedData);
+
+    // Si updatedData tiene ingredientes o pasos, tenemos que anexarle addBy
+    if (updatedData.ingredients) {
+      // Eliminamos los ingredientes anteriores para evitar duplicados
+      await this.recipeIngredientRepository.delete({ recipe: { id: recipe.id } });
+      // Luego asignamos el addBy a cada ingrediente nuevo
+      for (const ingredient of updatedData.ingredients) {
+        Object.assign(ingredient, { addBy: { id: userId } as User });
+      }
+    }
+
+    if (updatedData.steps) {
+      // Eliminamos los pasos anteriores para evitar duplicados
+      await this.recipeStepRepository.delete({ recipe: { id: recipe.id } });
+      // Luego asignamos el author a cada paso nuevo
+      for (const step of updatedData.steps) {
+        Object.assign(step, { author: { id: userId } as User });
+      }
+    }
+
+    const newData = {
+      ...updatedData,
+      lastEditor: { id: userId } as User,
+    };
+
+    Object.assign(recipe, newData);
     const updatedRecipe = await this.recipeRepository.save(recipe);
     return { data: updatedRecipe };
   }
