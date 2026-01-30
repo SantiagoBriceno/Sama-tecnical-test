@@ -55,11 +55,30 @@ export class RecipesController {
     @Query('page') page: number,
     @Query('limit') limit: number,
   ) {
-    return this.recipesService.getPaginatedRecipesByIdUser(
+
+    const {data: myRecipes, meta: myRecipesMeta} = await this.recipesService.getPaginatedRecipesByIdUser(
       req.user!.id,
       page,
       limit,
     );
+
+    const {data: collaboratedRecipes, meta: collaboratedRecipesMeta} = await this.recipesService.getPaginatedCollaboratedRecipesByIdUser(
+      req.user!.id,
+      page,
+      limit,
+    );
+
+
+    return {
+      data: {
+        myRecipes,
+        collaboratedRecipes,
+      },
+      meta: {
+        myRecipesMeta,
+        collaboratedRecipesMeta,
+      },
+    }
   }
 
   @Get('by/:recipeId')

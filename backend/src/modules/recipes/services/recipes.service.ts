@@ -74,8 +74,6 @@ export class RecipesService {
       });
       await queryRunner.manager.save(collaborator);
       await queryRunner.commitTransaction();
-
-      console.log('Receta creada exitosamente:', savedRecipe);
       return savedRecipe;
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -198,16 +196,21 @@ export class RecipesService {
     const [data, total] = await this.recipeRepository.findAndCount({
       where: {
         collaborators: {
-          user: { id: idUser },
-        },
+          user: { id: idUser  },
+          recipe: { author: { id: Not(idUser) } },
+        }
       },
       ...recipeConsultOptions,
       skip,
       take: limit,
       order: { created_at: 'DESC' },
     });
+
+    console.log(data);
+
+
     return {
-      data,
+      data: data,
       meta: {
         totalItems: total,
         itemCount: data.length,
