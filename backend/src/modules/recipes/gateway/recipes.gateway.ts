@@ -25,10 +25,12 @@ export class RecipesGateway
 {
   @WebSocketServer()
   server: Server;
+  private occupiedInputsPerRoom = new Map<
+    string,
+    Record<InputRecipeFields, string>
+  >();
 
-  constructor(
-    private readonly recipeService: RecipesService,
-  ) {}
+  constructor(private readonly recipeService: RecipesService) {}
 
   handleConnection(client: authenticatedClient) {
     try {
@@ -127,17 +129,88 @@ export class RecipesGateway
     @MessageBody() data: { recipeId: string; inputId: InputRecipeFields },
     @ConnectedSocket() client: authenticatedClient,
   ) {
+    console.log('Input focus data received:', data);
     const recipeRoom = `recipe-${data.recipeId}`;
-    const { user } = client;
-    // Notificamos a todos los usuarios en la sala sobre el usuario que hizo focus
-    this.server.to(recipeRoom).emit('recipe-input-focus', {
+    const { username } = client.user;
+
+    // Obtenemos los campos ocupados para la receta o inicializamos uno nuevo para la room
+    const fields = this.occupiedInputsPerRoom.get(recipeRoom) || {
+      description: '',
+      title: '',
+      ingredients: '',
+      steps: '',
+    };
+
+    //1. Obtenemos el campo que sequiere editar
+    const occupiedBy = fields[data.inputId];
+    //2. Si el campo está ocupado por otro usuario, enviamos un mensaje de error al cliente
+
+    if (occupiedBy !== '' && occupiedBy !== username) {
+      console.log(`Input ${data.inputId} is already occupied by ${occupiedBy}`);
+      this.server.to(client.id).emit('input-occupied', {
+        recipeId: data.recipeId,
+        inputsOccupied: fields,
+        message: `El campo ${data.inputId} ya está siendo editado por otro usuario`,
+      });
+      return {
+        status: 'input-occupied',
+        room: recipeRoom,
+      };
+    }
+
+    // Marcamos el campo como ocupado por el usuario actual
+    fields[data.inputId] = username;
+    this.occupiedInputsPerRoom.set(
+      recipeRoom,
+      fields as Record<InputRecipeFields, string>,
+    );
+
+    // Notificamos a todos los usuarios menos al que hizo focus en la sala sobre el usuario que está editando un campo
+    this.server.to(recipeRoom).emit('new-input-focus', {
       recipeId: data.recipeId,
-      inputId: data.inputId,
-      message: `El usuario ${user.username} está editando este campo`,
+      inputsOccupied: fields,
+      message: `El usuario ${username} está editando este campo`,
     });
-    console.log('mensaje enviado a la sala:', recipeRoom);
+    console.log('Los campos ocupados son:', fields);
     return {
       status: 'input-focused',
+      room: recipeRoom,
+    };
+  }
+
+  @UseGuards(WsGuard)
+  @SubscribeMessage('input-blur')
+  async HandleInputBlur(
+    @MessageBody() data: { recipeId: string; inputId: InputRecipeFields },
+    @ConnectedSocket() client: authenticatedClient,
+  ) {
+    const recipeRoom = `recipe-${data.recipeId}`;
+    const { username } = client.user;
+    // Obtenemos los campos ocupados para la receta
+    const fields = this.occupiedInputsPerRoom.get(recipeRoom) || {
+      description: '',
+      title: '',
+      ingredients: '',
+      steps: '',
+    };
+    // Si se llama handle blur es por que el usuario estaba editando ese campo, por lo que liberamos el campo
+
+    fields[data.inputId] = '';
+
+    this.occupiedInputsPerRoom.set(
+      recipeRoom,
+      fields as Record<InputRecipeFields, string>,
+    );
+    // Notificamos a todos los usuarios en la sala sobre el usuario que dejó de editar un campo
+    this.server.to(recipeRoom).emit('recipe-input-blur', {
+      recipeId: data.recipeId,
+      inputsOccupied: fields,
+      message: `El usuario ${username} ha dejado de editar este campo`,
+    });
+    console.log('mensaje enviado a la sala:', recipeRoom);
+
+    return {
+      status: 'input-blurred',
       room: recipeRoom,
     };
   }
@@ -159,13 +232,11 @@ export class RecipesGateway
     const { user } = client;
     // Notificamos a todos los usuarios menos al que editó en la sala sobre el usuario que editó un campo
 
-    this.server
-      .to(recipeRoom)
-      .emit('recipe-field-updated', {
-        recipeId: data.recipeId,
-        data: data.data,
-        message: `El usuario ${user.username} ha editado la receta`,
-      });
+    this.server.to(recipeRoom).emit('recipe-field-updated', {
+      recipeId: data.recipeId,
+      data: data.data,
+      message: `El usuario ${user.username} ha editado la receta`,
+    });
 
     this.recipeService.updateRecipe(data.recipeId, data.data, user.sub);
     return {
@@ -179,7 +250,9 @@ export class RecipesGateway
 
     const activeUsers = sockets.map((socket) => socket['user'].username);
 
-    const uniqueActiveUsers = activeUsers.filter((value, index, self) => self.indexOf(value) === index);
+    const uniqueActiveUsers = activeUsers.filter(
+      (value, index, self) => self.indexOf(value) === index,
+    );
 
     console.log(`Users viewing recipe ${recipeId}:`, uniqueActiveUsers);
     return uniqueActiveUsers;
