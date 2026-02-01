@@ -3,6 +3,7 @@ import { RecipeDetails, RecipeSummary } from "../types/recipe";
 export interface RecipeState {
   publicRecipes: RecipeSummary[];
   myRecipes: RecipeSummary[];
+  collaboratedRecipes: RecipeSummary[];
   selectedRecipe: RecipeDetails | null;
   isLoading: boolean;
   error: string | null;
@@ -11,6 +12,7 @@ export interface RecipeState {
 export const initialRecipeState: RecipeState = {
   publicRecipes: [],
   myRecipes: [],
+  collaboratedRecipes: [],
   selectedRecipe: null,
   isLoading: false,
   error: null,

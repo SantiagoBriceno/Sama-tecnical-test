@@ -8,6 +8,25 @@
   height: 100%;
   width: 100%;
 
+  mat-card-header {
+    align-items: center;
+
+
+    mat-card-title {
+      // Evitamos que el título sea demasiado largo
+      font-size: 1.1rem;
+      font-weight: bold;
+
+      max-width: 250px;
+
+    }
+
+    mat-card-subtitle {
+      font-size: 0.9rem;
+      color: #666;
+    }
+  }
+
   mat-card-content {
     flex-grow: 1;
 
@@ -17,7 +36,7 @@
       -webkit-line-clamp: 4;
       line-clamp: 4;
       -webkit-box-orient: vertical;
-      
+
       overflow: hidden;
       text-overflow: ellipsis;
     }

@@ -1,18 +1,23 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormModule } from '../../../core/modules/form/form.module';
-import {
-  Recipe,
-  RecipeDetails,
-} from '../../../core/recipes/types/recipe';
+import { Recipe, RecipeDetails } from '../../../core/recipes/types/recipe';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { A11yModule } from '@angular/cdk/a11y';
 import { debounceTime } from 'rxjs';
-import { disconnect, joinRoom, recipeChanged } from '../../../core/collab/store/collab.action';
-import { selectRecipeToEdit, selectUsersInRoom } from '../../../core/collab/store/collab.selector';
+import {
+  disconnect,
+  joinRoom,
+  leaveRoom,
+  recipeChanged,
+  setInputBlur,
+  setInputFocus,
+} from '../../../core/collab/store/collab.action';
+import { selectInputsOccupied, selectRecipeToEdit, selectUsersInRoom } from '../../../core/collab/store/collab.selector';
 import { selectUsername } from '../../../core/auth/store/auth.selector';
 import { selectSelectedRecipe } from '../../../core/recipes/store/recipe.selector';
+import { InputRecipeFields } from '../../../core/collab/types/collab';
 
 @Component({
   selector: 'app-recipe-edition',
@@ -28,6 +33,7 @@ export class EditRecipe {
   // instanciamos a receta seleccionada inicialmente
   public forEditRecipe = this.store.selectSignal<Recipe | null>(selectRecipeToEdit);
   public selectedRecipe = this.store.selectSignal<RecipeDetails | null>(selectSelectedRecipe);
+  public inputsOccupied = this.store.selectSignal<Record<InputRecipeFields, string>>(selectInputsOccupied);
   public collaborators = this.store.selectSignal(selectUsersInRoom);
   public currentUser = this.store.selectSignal(selectUsername);
   units = ['gr', 'ml', 'taza', 'unidad', 'kg'];
@@ -52,10 +58,14 @@ export class EditRecipe {
           { emitEvent: false },
         );
         this.updateFormArrays(recipe);
+        this.updateFieldsStatus(this.inputsOccupied());
       }
 
-      console.log('Current recipe data:', this.forEditRecipe());
-      console.log('Current collaborators in room:', this.collaborators());
+      // console.log('Current recipe data:', this.forEditRecipe());
+      // console.log('Current collaborators in room:', this.collaborators());
+      console.log('Current inputs occupied:', this.inputsOccupied());
+
+      
     });
   }
 
@@ -66,12 +76,10 @@ export class EditRecipe {
   }
 
   ngOnDestroy() {
-    this.store.dispatch(disconnect());
+    this.store.dispatch(leaveRoom({ recipeId: this.paramId || '' }));
   }
 
   private formConfig() {
-
-
     Object.keys(this.recipeForm.controls).forEach((key) => {
       const control = this.recipeForm.get(key);
       if (control) {
@@ -126,6 +134,23 @@ export class EditRecipe {
     }
   }
 
+  private updateFieldsStatus(occupied: Record<InputRecipeFields, string>) {
+    Object.keys(this.recipeForm.controls).forEach((key) => {
+      const field = key as InputRecipeFields;
+      const control = this.recipeForm.get(field);
+      
+      const occupantId = occupied[field];
+      // Si hay alguien y no soy yo -> Deshabilitar
+      const isLockedByOther = occupantId && occupantId !== this.currentUser();
+
+      if (isLockedByOther) {
+        control?.disable({ emitEvent: false }); // emitEvent: false para evitar bucles infinitos
+      } else {
+        control?.enable({ emitEvent: false });
+      }
+    });
+  }
+
   get ingredients() {
     return this.recipeForm.get('ingredients') as FormArray;
   }
@@ -160,21 +185,13 @@ export class EditRecipe {
   }
 
   // Funcion para emitir cuando se hace focus en un campo, indicando que el usuario está editando ese campo.
-  onFieldFocus(fieldName: string) {
-    const currentUser = this.currentUser();
-    this.activeEditors.update((editors) => ({
-      ...editors,
-      [fieldName]: currentUser!,
-    }));
+  onFieldFocus(fieldName: InputRecipeFields) {
+    this.store.dispatch(setInputFocus({ recipeId: this.paramId || '', inputId: fieldName }));
   }
 
   // Funcion para emitir cuando se pierde el focus en un campo, indicando que el usuario ha dejado de editar ese campo.
-  onFieldBlur(fieldName: string) {
-    this.activeEditors.update((editors) => {
-      const updatedEditors = { ...editors };
-      delete updatedEditors[fieldName];
-      return updatedEditors;
-    });
+  onFieldBlur(fieldName: InputRecipeFields) {
+    this.store.dispatch(setInputBlur({ recipeId: this.paramId || '', inputId: fieldName }));
   }
 
   // Función para hacer que un input este deshabilitado si otro usuario está editándolo (actualmente no se usa)
@@ -192,7 +209,7 @@ export class EditRecipe {
   });
 
   // Identificar quién está en el campo
-  getEditorOf(field: string): string | null {
-    return this.activeEditors()[field] || null;
+  getEditorOf(field: InputRecipeFields): string | null {
+    return this.inputsOccupied()[field] || null;
   }
 }

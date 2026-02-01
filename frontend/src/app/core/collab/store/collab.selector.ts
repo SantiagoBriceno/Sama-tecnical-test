@@ -8,3 +8,4 @@ export const selectUsersInRoom = (state: AppState) => state.collab.usersInRoom;
 export const selectCollabIsLoading = (state: AppState) => state.collab.isLoading;
 export const selectCollabError = (state: AppState) => state.collab.error;
 export const selectRecipeToEdit = (state: AppState) => state.collab.recipeToEdit;
+export const selectInputsOccupied = (state: AppState) => state.collab.inputsOccupied;

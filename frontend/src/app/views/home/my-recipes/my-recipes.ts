@@ -1,7 +1,7 @@
 import { Component, effect, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { loadMyRecipes } from '../../../core/recipes/store/recipe.action';
-import { selectMyRecipes } from '../../../core/recipes/store/recipe.selector';
+import { selectCollaboratedRecipes, selectMyRecipes } from '../../../core/recipes/store/recipe.selector';
 import { RecipeList } from "../components/recipe-list/recipe-list";
 
 @Component({
@@ -14,6 +14,7 @@ export class MyRecipes {
   
   private readonly store = inject(Store);
   public recipes = this.store.selectSignal(selectMyRecipes);
+  public collaborated = this.store.selectSignal(selectCollaboratedRecipes);
 
   constructor() {
     effect(() => {

@@ -57,16 +57,27 @@ export class CollabEffect {
     ),
   );
 
-  emitRecipeChanges$ = createEffect(() =>
+  inputBlur$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(collabAction.recipeChanged),
-      map(({ recipeId, changes }) => {
-        this.collabService.emitRecipeChanges(recipeId, changes);
+      ofType(collabAction.setInputBlur),
+      map(({ recipeId, inputId }) => {
+        this.collabService.onInputBlur(recipeId, inputId);
+        return { type: '[Collab] Input Blur Emitted' };
       }),
     ),
+  );
+
+  emitRecipeChanges$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(collabAction.recipeChanged),
+        map(({ recipeId, changes }) => {
+          this.collabService.emitRecipeChanges(recipeId, changes);
+        }),
+      ),
     {
       dispatch: false,
-    }
+    },
   );
 
   // Listeners para los eventos dentro de la sala colaborativa
@@ -115,13 +126,63 @@ export class CollabEffect {
           map((data) => {
             console.log('Recipe change received via collab service:', data);
             this.notificationToast.show(
-              'La receta ha sido actualizada por otro colaborador.',
+              'La receta ha sido actualizada satisfactoriamente.',
               'info',
             );
             return collabAction.recipeChangeReceived({
               recipeId: data.recipeId,
               data: data.data,
               message: data.message,
+            });
+          }),
+        ),
+      ),
+    ),
+  );
+
+  listenerFocusInputSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(collabAction.joinRoomSuccess),
+      switchMap(() =>
+        this.collabService.listenInputFocusSuccess().pipe(
+          map(({ recipeId, inputsOccupied }) => {
+            return collabAction.setInputFocusSuccess({
+              recipeId,
+              inputsOccupied,
+            });
+          }),
+        ),
+      ),
+    ),
+  );
+
+  listenerFocusInputFailure$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(collabAction.joinRoomSuccess),
+      switchMap(() =>
+        this.collabService.listenInputFailure().pipe(
+          map(({ recipeId, inputsOccupied, message }) => {
+            this.notificationToast.show(`No se pudo enfocar el campo: ${message}`, 'error');
+            return collabAction.setInputFocusFailure({
+              recipeId,
+              inputsOccupied,
+              message,
+            });
+          }),
+        ),
+      ),
+    ),
+  );
+
+  listenerBlurInput$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(collabAction.joinRoomSuccess),
+      switchMap(() =>
+        this.collabService.listenInputBlur().pipe(
+          map(({ recipeId, inputsOccupied }) => {
+            return collabAction.setInputBlurSuccess({
+              recipeId,
+              inputsOccupied,
             });
           }),
         ),

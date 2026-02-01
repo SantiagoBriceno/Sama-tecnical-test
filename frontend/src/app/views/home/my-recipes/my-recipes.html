@@ -1,3 +1,19 @@
 <main>
+  @if (recipes().length === 0) {
+  <div class="not-recipes">
+    <p>No tienes recetas creadas aún. ¡Empieza a crear la tuya!</p>
+  </div>
+  } @else {
+  <h3>Mis recetas</h3>
   <app-recipe-list [recipes]="recipes()"></app-recipe-list>
+  <hr>
+  }
+
+  @if (collaborated().length > 0) {
+  <h3>Recetas colaboradas</h3>
+  <app-recipe-list [recipes]="collaborated()"></app-recipe-list>
+  }
+
+
+
 </main>

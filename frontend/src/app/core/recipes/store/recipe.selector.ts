@@ -14,6 +14,11 @@ export const selectMyRecipes = createSelector(
   (state: RecipeState) => state.myRecipes,
 );
 
+export const selectCollaboratedRecipes = createSelector(
+  selectRecipeState,
+  (state: RecipeState) => state.collaboratedRecipes,
+);
+
 export const selectSelectedRecipe = createSelector(
   selectRecipeState,
   (state: RecipeState) => state.selectedRecipe,

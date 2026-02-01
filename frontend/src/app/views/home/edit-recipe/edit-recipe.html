@@ -49,23 +49,20 @@
         <div class="row-edit-group" [formGroupName]="i">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Nombre</mat-label>
-            <input matInput formControlName="name" (focus)="onFieldFocus('ingredient-' + i)"
-              (blur)="onFieldBlur('ingredient-' + i)">
-            @if (getEditorOf('ingredient-' + i)) {
+            <input matInput formControlName="name">
+            <!-- @if (getEditorOf('ingredient-' + i)) {
             <mat-hint class="editor-hint">{{ getEditorOf('ingredient-' + i) }} editando...</mat-hint>
-            }
+            } -->
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="quantity-field">
             <mat-label>Cant.</mat-label>
-            <input matInput formControlName="quantity" (focus)="onFieldFocus('ingredient-' + i)"
-              (blur)="onFieldBlur('ingredient-' + i)">
+            <input matInput formControlName="quantity">
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="unit-field">
             <mat-label>Unidad</mat-label>
-            <mat-select formControlName="unit" (focus)="onFieldFocus('ingredient-' + i)"
-              (blur)="onFieldBlur('ingredient-' + i)">
+            <mat-select formControlName="unit">
               @for (u of units; track u) {
               <mat-option [value]="u">{{ u }}</mat-option>
               }
@@ -90,11 +87,10 @@
         <div class="row-edit-group" [formGroupName]="i">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Paso {{ $index + 1 }}</mat-label>
-            <textarea matInput formControlName="instruction" (focus)="onFieldFocus('step-' + $index)"
-              (blur)="onFieldBlur('step-' + $index)"></textarea>
-            @if (getEditorOf('step-' + $index)) {
+            <textarea matInput formControlName="instruction"></textarea>
+            <!-- @if (getEditorOf('step-' + $index)) {
             <mat-hint class="editor-hint">{{ getEditorOf('step-' + $index) }} modificando este paso...</mat-hint>
-            }
+            } -->
           </mat-form-field>
           @if (steps.length > 1) {
           <button mat-icon-button color="warn" (click)="removeStep($index)">
@@ -108,7 +104,6 @@
         </button>
       </div>
     </form>
-    <hr>
     <div class="collaborators-list">
       <h4>Colaboradores:</h4>
       <mat-chip-set>

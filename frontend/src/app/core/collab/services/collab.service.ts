@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { io, Socket } from 'socket.io-client';
 import { selectToken } from '../../auth/store/auth.selector';
@@ -69,6 +69,10 @@ export class CollabService {
     this.socket?.emit('input-focus', { recipeId, inputId });
   }
 
+  onInputBlur(recipeId: string, inputId: InputRecipeFields) {
+    this.socket?.emit('input-blur', { recipeId, inputId });
+  }
+
   emitRecipeChanges(recipeId: string, changes: Partial<Recipe>) {
     this.socket?.emit('edit-recipe-field', { recipeId, data: changes });
   }
@@ -78,6 +82,40 @@ export class CollabService {
       this.socket?.on(
         'recipe-field-updated',
         (data: { recipeId: string; data: Partial<Recipe>; message: string }) => {
+          observer.next(data);
+        },
+      );
+    });
+  }
+
+  // Escuchador del evento de focus en un input cuando el campo no esta ocupado
+  listenInputFocusSuccess(): Observable<{ recipeId: string; inputsOccupied: Record<InputRecipeFields, string> }> {
+    return new Observable((observer) => {
+      this.socket?.on(
+        'new-input-focus',
+        (data: { recipeId: string; inputsOccupied: Record<InputRecipeFields, string>; userId: string }) => {
+          observer.next(data);
+        },
+      );
+    });
+  }
+
+  listenInputBlur(): Observable<{ recipeId: string; inputsOccupied: Record<InputRecipeFields, string> }> {
+    return new Observable((observer) => {
+      this.socket?.on(
+        'recipe-input-blur',
+        (data: { recipeId: string; inputsOccupied: Record<InputRecipeFields, string>; userId: string }) => {
+          observer.next(data);
+        },
+      );
+    });
+  }
+
+  listenInputFailure(): Observable<{ recipeId: string; inputsOccupied: Record<InputRecipeFields, string>; message: string }> {
+    return new Observable((observer) => {
+      this.socket?.on(
+        'input-occupied',
+        (data: { recipeId: string; inputsOccupied: Record<InputRecipeFields, string>; message: string }) => {
           observer.next(data);
         },
       );

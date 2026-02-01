@@ -28,8 +28,11 @@ export class RecipeService {
     return this.http.get<any>(`${this.apiUrl}/paginated?page=${page}&limit=${limit}`);
   }
 
-  getMyPaginatedRecipes(page: number = 1, limit: number = 10): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/my-recipes/paginated?page=${page}&limit=${limit}`);
+  getMyPaginatedRecipes(page: number = 1, limit: number = 10): Observable<{data: {
+    myRecipes: RecipeSummary[];
+    collaboratedRecipes: RecipeSummary[]
+  }}> {
+    return this.http.get<any>(`${this.apiUrl}/paginated/my-recipes?page=${page}&limit=${limit}`);
   }
 
   getRecipeById(recipeId: string): Observable<{data: RecipeDetails}> {

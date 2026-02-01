@@ -17,7 +17,7 @@ export const loadMyRecipes = createAction('[Recipe] Load My Recipes');
 
 export const loadMyRecipesSuccess = createAction(
   '[Recipe] Load My Recipes Success',
-  props<{ recipes: RecipeSummary[] }>()
+  props<{ recipes: RecipeSummary[], collaborated: RecipeSummary[] }>()
 );
 
 export const loadMyRecipesFailure = createAction(

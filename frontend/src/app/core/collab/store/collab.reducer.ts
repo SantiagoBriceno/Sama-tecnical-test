@@ -134,4 +134,42 @@ export const collabReducer = createReducer(
       error: null,
     };
   }),
+  on(collabActions.setInputFocus, (state, { recipeId, inputId }) => {
+    return {
+      ...state,
+      isLoading: true,
+      error: null,
+    };
+  }),
+  on(collabActions.setInputFocusSuccess, (state, { recipeId, inputsOccupied }) => {
+    return {
+      ...state,
+      inputsOccupied,
+      isLoading: false,
+      error: null,
+    };
+  }),
+  on(collabActions.setInputFocusFailure, (state, { recipeId, inputsOccupied, message }) => {
+    return {
+      ...state,
+      inputsOccupied,
+      isLoading: false,
+      error: message,
+    };
+  }),
+  on(collabActions.setInputBlur, (state, { recipeId, inputId }) => {
+    return {
+      ...state,
+      isLoading: true,
+      error: null,
+    };
+  }),
+  on(collabActions.setInputBlurSuccess, (state, { recipeId, inputsOccupied }) => {
+    return {
+      ...state,
+      inputsOccupied,
+      isLoading: false,
+      error: null,
+    };
+  }),
 );

@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
 
 import {
   addCollaborator,
@@ -23,8 +22,9 @@ import { catchError, map, mergeMap, of, tap } from 'rxjs';
 
 @Injectable()
 export class RecipeEffect {
-  private actions$ = inject(Actions)
+  private actions$ = inject(Actions);
   private recipeService = inject(RecipeService);
+  private router = inject(Router);
 
   createRecipe$ = createEffect(() =>
     this.actions$.pipe(
@@ -47,7 +47,8 @@ export class RecipeEffect {
       this.actions$.pipe(
         ofType(createRecipeSuccess),
         map(() => {
-          // this.router.navigate(['/recipes']);
+          // Modulo de notificaciones puede ser agregado aqui
+          this.router.navigate(['/recipes']);
         }),
       ),
     { dispatch: false },
@@ -73,9 +74,12 @@ export class RecipeEffect {
     this.actions$.pipe(
       ofType(loadMyRecipes),
       mergeMap(() =>
-        this.recipeService.getMyRecipes().pipe(
+        this.recipeService.getMyPaginatedRecipes().pipe(
           map((response) => {
-            return loadMyRecipesSuccess({ recipes: response.data });
+            return loadMyRecipesSuccess({
+              recipes: response.data.myRecipes,
+              collaborated: response.data.collaboratedRecipes,
+            });
           }),
           catchError((error) => {
             return of(createRecipeFailure({ error }));
@@ -104,10 +108,10 @@ export class RecipeEffect {
   addCollaborator$ = createEffect(() =>
     this.actions$.pipe(
       ofType(addCollaborator),
-      mergeMap(({recipeId}) =>
+      mergeMap(({ recipeId }) =>
         this.recipeService.addCollaborator(recipeId).pipe(
           map((response) => {
-            return addCollaboratorSuccess({recipe: response.data});
+            return addCollaboratorSuccess({ recipe: response.data });
           }),
           catchError((error) => {
             return of(addCollaboratorFailure({ error }));
@@ -116,5 +120,4 @@ export class RecipeEffect {
       ),
     ),
   );
-
 }

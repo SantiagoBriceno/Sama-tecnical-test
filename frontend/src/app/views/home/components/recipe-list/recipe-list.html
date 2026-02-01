@@ -1,5 +1,16 @@
 <main class="recipe-list">
+
+  @if(recipes.length === 0) {
+
+  <div class="non-recipes">
+    <p>No hay recetas disponibles en este momento.</p>
+  </div>
+
+  } @else {
   @for (recipe of recipes; track $index) {
-    <app-recipe-card [recipe]="recipe" (viewDetails)="openRecipeDetails($event)"></app-recipe-card>
+  <app-recipe-card [recipe]="recipe" (viewDetails)="openRecipeDetails($event)"></app-recipe-card>
   }
+  }
+
+
 </main>

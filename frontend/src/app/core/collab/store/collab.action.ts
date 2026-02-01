@@ -55,8 +55,27 @@ export const setInputFocus = createAction(
   props<{ recipeId: string; inputId: InputRecipeFields }>(),
 );
 
-// Para futuras mejoras implementar el blur también
+export const setInputFocusSuccess = createAction(
+  '[Collab] Set Input Focus Success',
+  props<{ recipeId: string; inputsOccupied: Record<InputRecipeFields, string> }>(),
+);
 
+export const setInputFocusFailure = createAction(
+  '[Collab] Set Input Focus Failure',
+  props<{ recipeId: string; inputsOccupied: Record<InputRecipeFields, string>; message: string }>(),
+);
+
+
+// Para futuras mejoras implementar el blur también
+export const setInputBlur = createAction(
+  '[Collab] Set Input Blur',
+  props<{ recipeId: string; inputId: InputRecipeFields }>(),
+);
+
+export const setInputBlurSuccess = createAction(
+  '[Collab] Set Input Blur Success',
+  props<{ recipeId: string; inputsOccupied: Record<InputRecipeFields, string> }>(),
+);
 
 export const setRecipeToEdit = createAction(
   '[Collab] Set Recipe To Edit',
