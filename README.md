@@ -20,9 +20,9 @@ Durante el desarrollo de la prueba técnica me enfrenté a varios desafíos que 
   cd <NOMBRE_DEL_REPOSITORIO>
   ```
 - Crear archivos de configuración:
+  - Entorno: Crear un archivo `.env` en la carpeta raíz con las variables necesarias (Ver .env.example para referencia)
   - Backend: Crear un archivo `.env` en la carpeta `backend` con las variables necesarias (Ver .env.example para referencia)
   - Frontend: Crear un archivo `.env` en la carpeta `frontend` vacío (evitar errores con la dockerización)
-  - Entorno: Crear un archivo `.env` en la carpeta raíz con las variables necesarias (Ver .env.example para referencia)
   - Ejecutar Docker Compose:
   ```bash
   docker-compose up --build
