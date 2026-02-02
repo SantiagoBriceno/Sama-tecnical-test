@@ -1,7 +1,12 @@
 .edit-recipe-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
 }
 
 .full-width {
@@ -32,8 +37,8 @@
   }
 }
 
-.collaborators-list{
-  h4{
+.collaborators-list {
+  h4 {
     margin-bottom: 0.5rem;
   }
 }
@@ -43,6 +48,18 @@
   gap: 10px;
   margin-bottom: 15px;
   align-items: flex-start;
+}
+
+.ingredients-container {
+  @media (max-width: 1000px) {
+    flex-wrap: wrap;
+    flex: 1 1 100%;
+
+    >mat-form-field:nth-child(2),
+    mat-form-field:nth-child(3) {
+      flex: 1 1 40%;
+    }
+  }
 }
 
 .editor-hint {
