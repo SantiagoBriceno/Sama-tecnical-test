@@ -77,6 +77,7 @@ export class RecipesService {
       return savedRecipe;
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      console.error('Error creating recipe:', error);
       throw error;
     } finally {
       await queryRunner.release();
