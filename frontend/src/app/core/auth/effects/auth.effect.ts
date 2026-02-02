@@ -14,9 +14,10 @@ import {
   logout,
   logoutSuccess,
 } from '../store/auth.action';
-import { catchError, map, mergeMap, tap, withLatestFrom } from 'rxjs';
+import { catchError, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
 import { selectLoginUser } from '../store/auth.selector';
 import { AuthService } from '../services/auth.service';
+import { ToastService } from '../../../shared/toast/toast';
 
 @Injectable()
 export class AuthEffect {
@@ -24,6 +25,7 @@ export class AuthEffect {
   private store = inject(Store);
   private router = inject(Router);
   private authService = inject(AuthService);
+  private notificationService = inject(ToastService);
 
   // Verifica si el usuario ya está autenticado al iniciar la aplicación para mantener la sesión activa. (Obviamente es muy básico, solo revisa si hay un token en el localStorage).
   checkAuth$ = createEffect(() =>
@@ -52,7 +54,8 @@ export class AuthEffect {
           }),
           catchError((error) => {
             // console.error('AuthEffect - login failed:', error);
-            return [loginFailure({ error })];
+            this.notificationService.show('Error al iniciar sesión', 'error');
+            return of(loginFailure({ error }));
           }),
         );
       }),
@@ -63,25 +66,36 @@ export class AuthEffect {
     this.actions$.pipe(
       ofType(loginSuccess),
       map(({ token, username }) => {
-        console.log('AuthEffect - Storing token and redirecting:', token);
+        this.notificationService.show('Inicio de sesión exitoso', 'success');
         localStorage.setItem('token', token);
         localStorage.setItem('username', username);
+
         return loginRedirect();
       }),
     ),
   );
 
+  loginFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(loginFailure),
+        tap(({ error }) => {
+          console.error('AuthEffect - Login failure:', error);
+          this.notificationService.show('Fallo en el inicio de sesión', 'error');
+        }),
+      ),
+    { dispatch: false },
+  );
+
   register$ = createEffect(() =>
     this.actions$.pipe(
       ofType(register),
-      mergeMap(({newUser}) => {
+      mergeMap(({ newUser }) => {
         return this.authService.register(newUser).pipe(
           map((response) => {
-            console.log('AuthEffect - register successful:', response);
             return registerSuccess({ token: response.accessToken, username: response.username });
-          }), 
+          }),
           catchError((error) => {
-            console.error('AuthEffect - register failed:', error);
             return [registerFailure({ error })];
           }),
         );
@@ -89,15 +103,18 @@ export class AuthEffect {
     ),
   );
 
-  registerSuccess$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(registerSuccess),
-        map(({ token, username }) => {
-          this.store.dispatch(loginSuccess({ token, username }));
-        }),
-      ),
-    { dispatch: false },
+  registerSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(registerSuccess),
+      map(({ token, username }) => {
+        this.notificationService.show('Registro exitoso', 'success');
+        return loginSuccess({ token, username });
+      }),
+      catchError(({ error }) => {
+        this.notificationService.show('Error en el registro', 'error');
+        return of(registerFailure({ error }));
+      }),
+    ),
   );
 
   navigateToHome$ = createEffect(
@@ -105,7 +122,6 @@ export class AuthEffect {
       this.actions$.pipe(
         ofType(loginRedirect),
         tap(() => {
-          console.log('AuthEffect - Navigating to /home');
           this.router.navigate(['/home']);
         }),
       ),

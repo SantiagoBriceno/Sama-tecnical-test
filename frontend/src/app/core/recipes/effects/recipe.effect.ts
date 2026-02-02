@@ -19,11 +19,13 @@ import {
 } from '../store/recipe.action';
 import { RecipeService } from '../services/recipe.service';
 import { catchError, map, mergeMap, of, tap } from 'rxjs';
+import { ToastService } from '../../../shared/toast/toast';
 
 @Injectable()
 export class RecipeEffect {
   private actions$ = inject(Actions);
   private recipeService = inject(RecipeService);
+  private notificationService = inject(ToastService);
   private router = inject(Router);
 
   createRecipe$ = createEffect(() =>
@@ -48,7 +50,8 @@ export class RecipeEffect {
         ofType(createRecipeSuccess),
         map(() => {
           // Modulo de notificaciones puede ser agregado aqui
-          this.router.navigate(['/recipes']);
+          this.notificationService.show('Receta creada exitosamente', 'success'); 
+          this.router.navigate(['/home/recipes']);
         }),
       ),
     { dispatch: false },
