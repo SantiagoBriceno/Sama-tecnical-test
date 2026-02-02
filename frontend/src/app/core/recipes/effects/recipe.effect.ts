@@ -57,6 +57,21 @@ export class RecipeEffect {
     { dispatch: false },
   );
 
+  createRecipeFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(createRecipeFailure),
+        map(({ error }) => {
+          console.error('Error creating recipe:', error);
+          this.notificationService.show(
+            'Error al crear la receta: ' + error.message,
+            'error',
+          );
+        }),
+      ),
+    { dispatch: false },
+  );
+
   getRecipes$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loadRecipes),
