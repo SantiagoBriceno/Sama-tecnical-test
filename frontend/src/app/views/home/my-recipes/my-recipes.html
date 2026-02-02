@@ -9,7 +9,7 @@
   <hr>
   }
 
-  @if (collaborated().length > 0) {
+  @if (collaborated() && collaborated().length > 0) {
   <h3>Recetas colaboradas</h3>
   <app-recipe-list [recipes]="collaborated()"></app-recipe-list>
   }
