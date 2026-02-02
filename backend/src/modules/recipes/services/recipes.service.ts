@@ -74,7 +74,7 @@ export class RecipesService {
       });
       await queryRunner.manager.save(collaborator);
       await queryRunner.commitTransaction();
-      return savedRecipe;
+      return { newRecipe: savedRecipe};
     } catch (error) {
       await queryRunner.rollbackTransaction();
       console.error('Error creating recipe:', error);
