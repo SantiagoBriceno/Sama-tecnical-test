@@ -21,13 +21,15 @@ export class RecipesController {
   constructor(private readonly recipesService: RecipesService) {}
 
   @Post('create')
-  @UsePipes(new ValidationPipe())
+  // @UsePipes(new ValidationPipe())
   async createRecipe(
     @Req() req: AuthenticatedRequest,
     @Body() createRecipeDto: CreateRecipeDto,
   ) {
+    console.log('Creating recipe with data:', createRecipeDto);
+    console
     console.log('Authenticated user:', req.user);
-    return this.recipesService.createRecipe(createRecipeDto, req.user!);
+    // return this.recipesService.createRecipe(createRecipeDto, req.user!);
   }
 
   @Get('all')
