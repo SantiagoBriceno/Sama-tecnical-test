@@ -18,7 +18,7 @@ import {
   loadRecipeSuccess,
 } from '../store/recipe.action';
 import { RecipeService } from '../services/recipe.service';
-import { catchError, map, mergeMap, of, tap } from 'rxjs';
+import { catchError, map, mergeMap, of } from 'rxjs';
 import { ToastService } from '../../../shared/toast/toast';
 
 @Injectable()
