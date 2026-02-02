@@ -46,7 +46,7 @@
       <div formArrayName="ingredients" class="section-container form-section">
         <h4>Ingredientes</h4>
         @for (ingredient of ingredients.controls; track ingredient; let i = $index) {
-        <div class="row-edit-group" [formGroupName]="i">
+        <div class="row-edit-group ingredients-container" [formGroupName]="i">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Nombre</mat-label>
             <input matInput formControlName="name">
