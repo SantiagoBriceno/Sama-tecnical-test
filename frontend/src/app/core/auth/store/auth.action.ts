@@ -3,6 +3,8 @@ import { LoginUser, RegisterUser } from '../../user/models/user.model';
 
 export const isLoggedIn = createAction('[Auth] Is Logged In');
 
+export const notIsLoggedIn = createAction('[Auth] Not Is Logged In');
+
 export const login = createAction('[Auth] Login');
 
 export const loginSuccess = createAction('[Auth] Login Success', props<{ token: string, username: string }>());

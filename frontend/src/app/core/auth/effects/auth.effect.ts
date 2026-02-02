@@ -13,6 +13,7 @@ import {
   registerFailure,
   logout,
   logoutSuccess,
+  notIsLoggedIn,
 } from '../store/auth.action';
 import { catchError, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
 import { selectLoginUser } from '../store/auth.selector';
@@ -37,9 +38,20 @@ export class AuthEffect {
         if (token && username) {
           return loginSuccess({ token, username });
         }
-        return loginFailure({ error: 'No token found' });
+        return notIsLoggedIn();
       }),
     ),
+  );
+
+  checkAuthFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(notIsLoggedIn),
+        tap(() => {
+          this.router.navigate(['/login']);
+        }),
+      ),
+    { dispatch: false },
   );
 
   login$ = createEffect(() =>
@@ -52,7 +64,7 @@ export class AuthEffect {
             return loginSuccess({ token: response.accessToken, username: response.username });
           }),
           catchError((error) => {
-            this.notificationService.show('Error al iniciar sesión', 'error');
+            console.error('Login error:', error);
             return of(loginFailure({ error }));
           }),
         );
@@ -78,7 +90,7 @@ export class AuthEffect {
       this.actions$.pipe(
         ofType(loginFailure),
         tap(({ error }) => {
-          this.notificationService.show('Fallo en el inicio de sesión', 'error');
+          this.notificationService.show('Credenciales inválidas', 'error');
         }),
       ),
     { dispatch: false },
@@ -104,7 +116,6 @@ export class AuthEffect {
     this.actions$.pipe(
       ofType(registerSuccess),
       map(({ token, username }) => {
-        this.notificationService.show('Registro exitoso', 'success');
         return loginSuccess({ token, username });
       }),
       catchError(({ error }) => {
