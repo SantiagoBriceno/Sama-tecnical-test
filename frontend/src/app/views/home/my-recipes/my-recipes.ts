@@ -17,9 +17,7 @@ export class MyRecipes {
   public collaborated = this.store.selectSignal(selectCollaboratedRecipes);
 
   constructor() {
-    effect(() => {
-      console.log('My Recipes updated:', this.recipes());
-    });
+    effect(() => {});
   }
 
   ngOnInit() {

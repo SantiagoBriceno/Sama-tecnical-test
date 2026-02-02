@@ -60,12 +60,6 @@ export class EditRecipe {
         this.updateFormArrays(recipe);
         this.updateFieldsStatus(this.inputsOccupied());
       }
-
-      // console.log('Current recipe data:', this.forEditRecipe());
-      // console.log('Current collaborators in room:', this.collaborators());
-      console.log('Current inputs occupied:', this.inputsOccupied());
-
-      
     });
   }
 
@@ -85,7 +79,6 @@ export class EditRecipe {
       if (control) {
         // Forma avanzada, hacerlo campo por campo con debounce para evitar demasiadas emisiones y hacerlo de forma especifica para cada campo.
         control.valueChanges.pipe(debounceTime(500)).subscribe((newValue) => {
-          console.log(`Campo "${key}" actualizado:`, newValue);
           this.store.dispatch(
             recipeChanged({
               recipeId: this.paramId || '',

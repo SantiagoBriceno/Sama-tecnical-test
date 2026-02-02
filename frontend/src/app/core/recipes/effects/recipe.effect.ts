@@ -62,7 +62,6 @@ export class RecipeEffect {
       this.actions$.pipe(
         ofType(createRecipeFailure),
         map(({ error }) => {
-          console.error('Error creating recipe:', error);
           this.notificationService.show(
             'Error al crear la receta: ' + error.message,
             'error',

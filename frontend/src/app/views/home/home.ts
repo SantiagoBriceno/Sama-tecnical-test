@@ -15,8 +15,6 @@ export class Home {
     private store: Store
   ) {}
   handleLogout() {
-    // Lógica de cierre de sesión aquí
-    console.log('Cerrando sesión...');
     this.store.dispatch(logout());
   }
 }

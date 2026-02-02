@@ -15,9 +15,7 @@ export class Dashboard {
   public recipes = this.store.selectSignal(selectPublicRecipes);
 
   constructor() {
-    effect(() => {
-      console.log('Dashboard Public Recipes updated:', this.recipes());
-    });
+    effect(() => {});
   }
 
   ngOnInit() {

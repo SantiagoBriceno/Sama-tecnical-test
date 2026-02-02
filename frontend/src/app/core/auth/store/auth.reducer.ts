@@ -5,7 +5,6 @@ import { initialAuthState } from '../models/auth.state';
 export const authReducer = createReducer(
   initialAuthState,
   on(authActions.login, (state) => {
-    // console.log('Reducer - Iniciando login...', state.loginUser);
     return {
       ...state,
       isLoading: true,
@@ -31,7 +30,6 @@ export const authReducer = createReducer(
     };
   }),
   on(authActions.updateLoginUser, (state, { user }) => {
-    // console.log('Reducer - Actualizando usuario de login:', user);
     return {
       ...state,
       loginUser: user,

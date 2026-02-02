@@ -71,6 +71,5 @@ export class RecipeForm implements OnInit {
       return;
     }
     this.store.dispatch(createRecipe({ recipe: this.recipeForm.value }));
-    console.log('Recipe Submitted', this.recipeForm.value);
   }
 }

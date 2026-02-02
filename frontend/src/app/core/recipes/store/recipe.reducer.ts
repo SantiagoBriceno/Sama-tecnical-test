@@ -34,8 +34,6 @@ export const recipeReducer = createReducer(
     };
   }),
   on(recipeActions.loadMyRecipesSuccess, (state, { recipes, collaborated }) => {
-    console.log('Reducer received collaborated recipes:', collaborated);
-    console.log('Reducer received my recipes:', recipes);
     return {
       ...state,
       myRecipes: recipes,

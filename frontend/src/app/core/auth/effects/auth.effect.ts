@@ -49,11 +49,9 @@ export class AuthEffect {
       mergeMap(([_action, user]) => {
         return this.authService.login(user).pipe(
           map((response) => {
-            // console.log('AuthEffect - login successful:', response);
             return loginSuccess({ token: response.accessToken, username: response.username });
           }),
           catchError((error) => {
-            // console.error('AuthEffect - login failed:', error);
             this.notificationService.show('Error al iniciar sesión', 'error');
             return of(loginFailure({ error }));
           }),
@@ -80,7 +78,6 @@ export class AuthEffect {
       this.actions$.pipe(
         ofType(loginFailure),
         tap(({ error }) => {
-          console.error('AuthEffect - Login failure:', error);
           this.notificationService.show('Fallo en el inicio de sesión', 'error');
         }),
       ),
@@ -133,7 +130,6 @@ export class AuthEffect {
       this.actions$.pipe(
         ofType(logout),
         tap(() => {
-          console.log('AuthEffect - Logging out and navigating to /login');
           localStorage.removeItem('token');
           this.store.dispatch(logoutSuccess());
           this.router.navigate(['/login']);
