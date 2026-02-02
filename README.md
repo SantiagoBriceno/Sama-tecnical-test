@@ -23,6 +23,11 @@ Durante el desarrollo de la prueba técnica me enfrenté a varios desafíos que 
   - Backend: Crear un archivo `.env` en la carpeta `backend` con las variables necesarias (Ver .env.example para referencia)
   - Frontend: Crear un archivo `.env` en la carpeta `frontend` vacío (evitar errores con la dockerización)
   - Entorno: Crear un archivo `.env` en la carpeta raíz con las variables necesarias (Ver .env.example para referencia)
+  - Ejecutar Docker Compose:
+  ```bash
+  docker-compose up --build
+  ```
+  
 
 ## Recomendaciones para Testing
 - **Cobertura de Pruebas**: Asegurar una alta cobertura de pruebas unitarias para todos los servicios y componentes críticos (En este caso solo se hicieron pruebas al servicio de autenticación, componente Login y componente Register).

@@ -1,59 +1,27 @@
-# Frontend
+# Documentación Técnica - Frontend
+## Introducción
+En esta documentación se detalla la configuración y estructura del Frontend desarrollado con NodeJS haciendo uso del Framework de desarrollo Angular.
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.1.
+Este aplicativo en cuestión se basa en la creación de recetas de cocina, teniendo a disposición del usuario vistas con las cuales podrá visualizar, crear, eliminar y editar de manera colaborativa recetas de cocina, además de contar con un sistema de autenticación y autorización para gestionar el acceso a las diferentes funcionalidades de la aplicación.
 
-## Development server
+## 💻 Stack Tecnológico (Frontend)
 
-To start a local development server, run:
+El frontend está desarrollado bajo una arquitectura orientada a componentes y gestión de estado reactiva.
 
+* **Framework:** [Angular 21](https://angular.dev/) (Última generación)
+* **Gestión de Estado:** [NgRx v21](https://ngrx.io/) (Store & Effects) para un flujo de datos unidireccional y predecible.
+* **Interfaz de Usuario (UI):** [Angular Material](https://material.angular.io/) & CDK para componentes de diseño profesionales y accesibles.
+* **Comunicación en Tiempo Real:** [Socket.io-client](https://socket.io/docs/v4/client-api/) para la sincronización de la edición colaborativa.
+* **Programación Reactiva:** [RxJS 7.8](https://rxjs.dev/) para el manejo de flujos de eventos asíncronos.
+* **Unit Testing:** [Vitest](https://vitest.dev/) (Sustituyendo a Karma/Jasmine por mayor velocidad en entornos modernos).
+* **Calidad de Código:** Prettier (configurado para consistencia en HTML y TypeScript).
+
+## Configuración del Proyecto
+
+### 1. Requisitos previos
+* Node.js (v18 o superior)
+* Instancia de base de datos (PostgreSQL o MySQL)
+
+### 2. Instalación
 ```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+npm install
