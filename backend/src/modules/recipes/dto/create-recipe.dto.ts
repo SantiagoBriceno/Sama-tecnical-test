@@ -44,8 +44,8 @@ export class CreateRecipeDto {
     message:
       'La descripción de la receta no puede tener más de 1000 caracteres',
   })
-  @MinLength(10, {
-    message: 'La descripción de la receta debe tener al menos 10 caracteres',
+  @MinLength(5, {
+    message: 'La descripción de la receta debe tener al menos 5 caracteres',
   })
   readonly description: string;
 
