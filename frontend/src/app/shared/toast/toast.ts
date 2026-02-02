@@ -9,7 +9,7 @@ export class ToastService {
   private snackBar = inject(MatSnackBar);
 
   private defaultConfig: MatSnackBarConfig = {
-    duration: 5000,
+    duration: 4000,
     horizontalPosition: 'center',
     verticalPosition: 'top',
   };
